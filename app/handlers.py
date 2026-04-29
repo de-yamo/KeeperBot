@@ -12,16 +12,34 @@ from aiogram.types import (
     Message,
 )
 
+from aiogram.filters import CommandStart
+
 from redis_client import RedisClient
 from sqlite_client import SQLiteClient
 
 logger = logging.getLogger("keeper.handlers")
 router = Router()
 
+@router.message(CommandStart())
+async def on_start(msg: Message, bot_username: str):
+    await msg.answer(
+        "👋 <b>Привет, я Keeper и давай расскажу как со мной Работать!</b>\n\n"
+        "<b>Что нужно для работы:</b>\n"
+        "⚠️ Только Подписка <b>Telegram Premium</b>\n\n"
+        "<b>Как подключить:</b>\n"
+        "1️⃣ - Откройте <b>Настройки</b> в Telegram\n"
+        "2️⃣ - Перейдите в <b>Telegram Business</b>\n"
+        "3️⃣ - Выберите <b>Чат-боты</b>\n"
+        "4️⃣ - Нажмите <b>Добавить бота</b> и введите <code>@{bot_username}</code>\n"
+        "5️⃣ - Готово! Бот пришлёт подтверждение и вам останется только Начать его Работу!\n\n"
+        "<b>Как отключить:</b>\n"
+        "⛓️‍💥 Зайдите туда же и удалите бота из Чат-ботов!\n\n"
+        "🌐 Хотите иметь полный Доступ? Создайте своего бота и Установите его свои Сервера! Скопировав репозиторий - https://github.com/de-yamo/KeeperBot",
+        parse_mode="HTML",
+    )
 
-# ------------------------------------------------------------------ #
+
 #  Вспомогательные
-# ------------------------------------------------------------------ #
 
 def _now() -> str:
     return datetime.now(tz=timezone.utc).strftime("%d.%m.%Y %H:%M UTC")
@@ -55,9 +73,7 @@ def _msg_text(msg: Message) -> str:
     return "[сообщение без текста]"
 
 
-# ------------------------------------------------------------------ #
-#  1. Подключение / отключение → SQLite
-# ------------------------------------------------------------------ #
+# Логика Бота и обработка событий Telegram Business API
 
 @router.business_connection()
 async def on_business_connection(
@@ -89,11 +105,6 @@ async def on_business_connection(
             "Отслеживание остановлено! Все данные о ваших сообщениях удалятся через 24 часа!",
         )
 
-
-# ------------------------------------------------------------------ #
-#  2. Новое сообщение → Redis (TTL 24ч)
-# ------------------------------------------------------------------ #
-
 @router.business_message()
 async def on_business_message(
     msg: Message,
@@ -110,11 +121,6 @@ async def on_business_message(
         sender_name=_sender_name(msg),
         text=_msg_text(msg),
     )
-
-
-# ------------------------------------------------------------------ #
-#  3. Сообщение изменено → Redis + SQLite → уведомить
-# ------------------------------------------------------------------ #
 
 @router.edited_business_message()
 async def on_edited_business_message(
@@ -157,11 +163,6 @@ async def on_edited_business_message(
         f"<b>Стало:</b>\n{new_text}</blockquote>",
     )
     logger.info("EDITED: conn=%s chat=%d msg=%d owner=%d", msg.business_connection_id, chat_id, msg.message_id, owner_id)
-
-
-# ------------------------------------------------------------------ #
-#  4. Сообщения удалены → Redis + SQLite → уведомить
-# ------------------------------------------------------------------ #
 
 @router.deleted_business_messages()
 async def on_deleted_business_messages(

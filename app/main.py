@@ -55,9 +55,11 @@ async def main():
     dp["redis"] = redis
     dp["db"] = db
     dp["config"] = config
+    dp["bot_username"] = bot_info.username
     dp.include_router(router)
 
     logger.info("🚀 Keeper запущен!")
+    bot_info = await bot.get_me()
     try:
         await dp.start_polling(bot, allowed_updates=[
             "message",

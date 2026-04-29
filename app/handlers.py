@@ -21,19 +21,19 @@ logger = logging.getLogger("keeper.handlers")
 router = Router()
 
 @router.message(CommandStart())
-async def on_start(msg: Message, bot_username: str):
+async def on_start(msg: Message):
     await msg.answer(
         "👋 <b>Привет, я Keeper и давай расскажу как со мной Работать!</b>\n\n"
         "<b>Что нужно для работы:</b>\n"
-        "⚠️ Только Подписка <b>Telegram Premium</b>\n\n"
+        "<blockquote>⚠️ Только Подписка <b>Telegram Premium</b></blockquote>\n\n"
         "<b>Как подключить:</b>\n"
-        "1️⃣ - Откройте <b>Настройки</b> в Telegram\n"
+        "<blockquote>1️⃣ - Откройте <b>Настройки</b> в Telegram\n"
         "2️⃣ - Перейдите в <b>Telegram Business</b>\n"
         "3️⃣ - Выберите <b>Чат-боты</b>\n"
-        "4️⃣ - Нажмите <b>Добавить бота</b> и введите <code>@{bot_username}</code>\n"
-        "5️⃣ - Готово! Бот пришлёт подтверждение и вам останется только Начать его Работу!\n\n"
+        "4️⃣ - Нажмите <b>Добавить бота</b> и введите <code>@safe_and_keep_bot</code>\n"
+        "5️⃣ - Готово! Бот пришлёт подтверждение и вам останется только Начать его Работу!</blockquote>\n\n"
         "<b>Как отключить:</b>\n"
-        "⛓️‍💥 Зайдите туда же и удалите бота из Чат-ботов!\n\n"
+        "<blockquote>⛓️‍💥 Зайдите туда же и удалите бота из Чат-ботов!</blockquote>\n\n"
         "🌐 Хотите иметь полный Доступ? Создайте своего бота и Установите его свои Сервера! Скопировав репозиторий - https://github.com/de-yamo/KeeperBot",
         parse_mode="HTML",
     )

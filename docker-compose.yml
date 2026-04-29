@@ -1,0 +1,48 @@
+services:
+  keeper_redis:
+    image: redis:7-alpine
+    container_name: keeper_redis
+    restart: unless-stopped
+    command: >
+      redis-server
+      --appendonly yes
+      --requirepass ${REDIS_PASSWORD:-keeper_redis_pass_2024}
+    volumes:
+      - keeper_redis_data:/data
+    networks:
+      - keeper_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-keeper_redis_pass_2024}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  keeper:
+    build:
+      context: ./app
+      dockerfile: ../docker/Dockerfile
+    container_name: keeper
+    restart: unless-stopped
+    env_file:
+      - .env
+    depends_on:
+      keeper_redis:
+        condition: service_healthy
+    volumes:
+      - ./app:/app
+      - keeper_logs:/app/logs
+      - keeper_db:/app/data      # SQLite для Хранения АЙДИ Ползователей
+    networks:
+      - keeper_network
+
+volumes:
+  keeper_redis_data:
+    driver: local
+  keeper_logs:
+    driver: local
+  keeper_db:
+    driver: local
+
+networks:
+  keeper_network:
+    driver: bridge

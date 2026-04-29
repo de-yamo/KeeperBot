@@ -151,8 +151,8 @@ async def on_edited_business_message(
     await bot.send_message(
         owner_id,
         f"✏️ <b>Сообщение изменено</b>\n"
-        f"<blockquote>👤 {sender_name}\n"
-        f"🕐 {_now()}\n\n"
+        f"<blockquote>👤 от {sender_name}\n"
+        f"🕐 Время: {_now()}\n\n"
         f"<b>Было:</b>\n{old_text}\n\n"
         f"<b>Стало:</b>\n{new_text}</blockquote>",
     )
@@ -186,7 +186,7 @@ async def on_deleted_business_messages(
                 owner_id,
                 f"🗑 <b>Сообщение удалено</b>\n"
                 f"<blockquote>💬 Чат: <code>{chat_id}</code>\n"
-                f"🕐 {_now()}\n\n"
+                f"🕐 Время: {_now()}\n\n"
                 f"<i>Без Информации! (старше 24ч)</i></blockquote>",
             )
             continue
@@ -197,8 +197,8 @@ async def on_deleted_business_messages(
         await bot.send_message(
             owner_id,
             f"🗑 <b>Сообщение удалено</b>\n"
-            f"<blockquote>👤 {sender_name}\n"
-            f"🕐 {_now()}\n\n"
+            f"<blockquote>👤 от {sender_name}\n"
+            f"🕐 Время: {_now()}\n\n"
             f"<b>Текст:</b>\n{old_text}</blockquote>",
         )
 

@@ -58,8 +58,8 @@ async def main():
     dp["bot_username"] = bot_info.username
     dp.include_router(router)
 
-    logger.info("🚀 Keeper запущен!")
     bot_info = await bot.get_me()
+    logger.info("🚀 Keeper запущен!")
     try:
         await dp.start_polling(bot, allowed_updates=[
             "message",
